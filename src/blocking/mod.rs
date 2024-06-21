@@ -1,36 +1,22 @@
-#![doc = include_str!("../README.md")]
-pub mod blocking;
-mod connector_errors;
 #[doc(hidden)]
 pub mod endpoints;
-pub mod types;
 
+use crate::{
+    connector_errors::{ConnectorError, Error},
+    types::files::requests::UploadFileRequest,
+    ResponseWraper,
+};
+use reqwest::{
+    blocking::{multipart::Part, Client, ClientBuilder, RequestBuilder},
+    header::{HeaderMap, HeaderName, HeaderValue},
+    Method,
+};
+use serde::de::DeserializeOwned;
 use std::str::FromStr;
 
-use connector_errors::{ConnectorError, Error};
-use reqwest::{
-    header::{HeaderMap, HeaderName, HeaderValue},
-    multipart::Part,
-    Client, ClientBuilder, Method, RequestBuilder,
-};
-use serde::{de::DeserializeOwned, Deserialize};
-use serde_json::Value;
-use types::files::requests::UploadFileRequest;
-
-/// The connector client implements all relevant functions to communicate with an enmeshed
-/// connector.
 pub struct ConnectorClient<'a> {
     base_url: &'a str,
     client: Client,
-}
-
-#[derive(Deserialize, Clone, Debug)]
-#[doc(hidden)]
-pub enum ResponseWraper {
-    #[serde(rename = "result")]
-    Result(Value),
-    #[serde(rename = "error")]
-    Error(Value),
 }
 
 impl<'a> ConnectorClient<'a> {
@@ -57,7 +43,7 @@ impl<'a> ConnectorClient<'a> {
     }
 
     #[doc(hidden)]
-    pub async fn request<'de, M>(
+    pub fn request<'de, M>(
         &self,
         resource: &str,
         method: Method,
@@ -72,9 +58,9 @@ impl<'a> ConnectorClient<'a> {
             req = req.body(body);
         }
 
-        let response = req.send().await?;
+        let response = req.send()?;
 
-        let all_bytes = response.bytes().await?;
+        let all_bytes = response.bytes()?;
 
         match serde_json::from_slice::<ResponseWraper>(&all_bytes) {
             Ok(r) => match r {
@@ -93,15 +79,15 @@ impl<'a> ConnectorClient<'a> {
     }
 
     #[doc(hidden)]
-    pub async fn request_plain<M>(&self, resource: &str, method: Method) -> Result<M, Error>
+    pub fn request_plain<M>(&self, resource: &str, method: Method) -> Result<M, Error>
     where
         M: DeserializeOwned,
     {
         let req = self.build_request(resource, method);
 
-        let response = req.send().await?;
+        let response = req.send()?;
 
-        let all_bytes = response.bytes().await?;
+        let all_bytes = response.bytes()?;
 
         match serde_json::from_slice::<M>(&all_bytes) {
             Ok(r) => Ok(r),
@@ -118,10 +104,10 @@ impl<'a> ConnectorClient<'a> {
     }
 
     #[doc(hidden)]
-    pub async fn download(&self, resource: &str, method: Method) -> Result<Vec<u8>, Error> {
+    pub fn download(&self, resource: &str, method: Method) -> Result<Vec<u8>, Error> {
         let req = self.build_download(resource, method);
-        let response = req.send().await?;
-        let all_bytes = response.bytes().await?;
+        let response = req.send()?;
+        let all_bytes = response.bytes()?;
         if let Ok(ResponseWraper::Error(e)) = serde_json::from_slice::<ResponseWraper>(&all_bytes) {
             Err(serde_json::from_value::<ConnectorError>(e).unwrap().into())
         } else {
@@ -130,7 +116,7 @@ impl<'a> ConnectorClient<'a> {
     }
 
     #[doc(hidden)]
-    pub async fn download_qr(
+    pub fn download_qr(
         &self,
         resource: &str,
         method: Method,
@@ -140,8 +126,8 @@ impl<'a> ConnectorClient<'a> {
         if let Some(body) = body {
             req = req.body(body);
         }
-        let response = req.send().await?;
-        let all_bytes = response.bytes().await?;
+        let response = req.send()?;
+        let all_bytes = response.bytes()?;
         if let Ok(ResponseWraper::Error(e)) = serde_json::from_slice::<ResponseWraper>(&all_bytes) {
             Err(serde_json::from_value::<ConnectorError>(e).unwrap().into())
         } else {
@@ -150,7 +136,7 @@ impl<'a> ConnectorClient<'a> {
     }
 
     #[doc(hidden)]
-    pub async fn upload_file_internal<'de, M>(
+    pub fn upload_file_internal<'de, M>(
         &self,
         resource: &str,
         body: &UploadFileRequest<'_>,
@@ -173,7 +159,7 @@ impl<'a> ConnectorClient<'a> {
 
         let file_data = std::fs::read(file_path).unwrap();
 
-        let mut form = reqwest::multipart::Form::new()
+        let mut form = reqwest::blocking::multipart::Form::new()
             .text("title", (*title).to_owned())
             .text("expiresAt", (*expires_at).to_owned())
             .part("file", Part::bytes(file_data).file_name(file_name));
@@ -181,13 +167,9 @@ impl<'a> ConnectorClient<'a> {
             form = form.text("description", (*d).to_owned());
         }
 
-        let response = self
-            .build_multipart(resource)
-            .multipart(form)
-            .send()
-            .await?;
+        let response = self.build_multipart(resource).multipart(form).send()?;
 
-        let all_bytes = response.bytes().await?;
+        let all_bytes = response.bytes()?;
 
         match serde_json::from_slice::<ResponseWraper>(&all_bytes) {
             Ok(r) => match r {
