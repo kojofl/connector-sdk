@@ -1,29 +1,20 @@
 use std::str::FromStr;
 
 use crate::connector_errors::{ConnectorError, Error};
+use crate::types::files::requests::UploadFileRequest;
+use crate::ResponseWraper;
 use reqwest::{
     header::{HeaderMap, HeaderName, HeaderValue},
     multipart::Part,
     Client, ClientBuilder, Method, RequestBuilder,
 };
-use serde::{de::DeserializeOwned, Deserialize};
-use serde_json::Value;
-use crate::types::files::requests::UploadFileRequest;
+use serde::de::DeserializeOwned;
 
 /// The connector client implements all relevant functions to communicate with an enmeshed
 /// connector.
 pub struct ConnectorClient<'a> {
     base_url: &'a str,
     client: Client,
-}
-
-#[derive(Deserialize, Clone, Debug)]
-#[doc(hidden)]
-pub enum ResponseWraper {
-    #[serde(rename = "result")]
-    Result(Value),
-    #[serde(rename = "error")]
-    Error(Value),
 }
 
 impl<'a> ConnectorClient<'a> {
