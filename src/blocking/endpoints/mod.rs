@@ -8,3 +8,5 @@ pub mod monotoring_endpoint;
 pub mod outgoing_request_endpoint;
 pub mod relationship_templates_endpoint;
 pub mod relationships_endpoint;
+
+pub use super::errors::Error;

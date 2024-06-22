@@ -1,5 +1,6 @@
 use reqwest::Method;
 
+use super::Error;
 use crate::{
     blocking::ConnectorClient,
     types::connector_request::{
@@ -10,17 +11,14 @@ use crate::{
 
 /// All endpoints related to managing incomming requests.
 impl<'a> ConnectorClient<'a> {
-    pub fn get_incomming_request(
-        &self,
-        id: &str,
-    ) -> Result<Vec<ConnectorRequest>, crate::connector_errors::Error> {
+    pub fn get_incomming_request(&self, id: &str) -> Result<Vec<ConnectorRequest>, Error> {
         self.request(&format!("api/v2/Requests/Incoming?{id}"), Method::GET, None)
     }
 
     pub fn get_incomming_requests(
         &self,
         req: &GetRequestsRequest<'_>,
-    ) -> Result<Vec<ConnectorRequest>, crate::connector_errors::Error> {
+    ) -> Result<Vec<ConnectorRequest>, Error> {
         self.request(
             &format!(
                 "api/v2/Requests/Incoming?{}",
@@ -35,7 +33,7 @@ impl<'a> ConnectorClient<'a> {
         &self,
         request_id: &str,
         req: &DecideRequest,
-    ) -> Result<ConnectorRequestValidationResult, crate::connector_errors::Error> {
+    ) -> Result<ConnectorRequestValidationResult, Error> {
         self.request(
             &format!("api/v2/Requests/Incoming/{request_id}/CanAccept"),
             Method::PUT,
@@ -47,7 +45,7 @@ impl<'a> ConnectorClient<'a> {
         &self,
         request_id: &str,
         req: &DecideRequest,
-    ) -> Result<ConnectorRequestValidationResult, crate::connector_errors::Error> {
+    ) -> Result<ConnectorRequestValidationResult, Error> {
         self.request(
             &format!("api/v2/Requests/Incoming/{request_id}/CanReject"),
             Method::PUT,
@@ -55,11 +53,7 @@ impl<'a> ConnectorClient<'a> {
         )
     }
 
-    pub fn accept(
-        &self,
-        request_id: &str,
-        req: &DecideRequest,
-    ) -> Result<ConnectorRequest, crate::connector_errors::Error> {
+    pub fn accept(&self, request_id: &str, req: &DecideRequest) -> Result<ConnectorRequest, Error> {
         self.request(
             &format!("api/v2/Requests/Incoming/{request_id}/Accept"),
             Method::PUT,
@@ -67,11 +61,7 @@ impl<'a> ConnectorClient<'a> {
         )
     }
 
-    pub fn reject(
-        &self,
-        request_id: &str,
-        req: &DecideRequest,
-    ) -> Result<ConnectorRequest, crate::connector_errors::Error> {
+    pub fn reject(&self, request_id: &str, req: &DecideRequest) -> Result<ConnectorRequest, Error> {
         self.request(
             &format!("api/v2/Requests/Incoming/{request_id}/Reject"),
             Method::PUT,

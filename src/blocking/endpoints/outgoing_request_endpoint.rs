@@ -8,13 +8,14 @@ use crate::{
         ConnectorRequest, ConnectorRequestValidationResult,
     },
 };
+use super::Error;
 
 /// All endpoints related to creating and managing outgoing requests.
 impl<'a> ConnectorClient<'a> {
     pub fn can_create_request(
         &self,
         req: &CanCreateOutgoingRequestRequest,
-    ) -> Result<ConnectorRequestValidationResult, crate::connector_errors::Error> {
+    ) -> Result<ConnectorRequestValidationResult, Error> {
         self.request(
             "api/v2/Requests/Outgoing/Validate",
             Method::POST,
@@ -25,7 +26,7 @@ impl<'a> ConnectorClient<'a> {
     pub fn create_request(
         &self,
         req: &CreateOutgoingRequestRequest,
-    ) -> Result<ConnectorRequest, crate::connector_errors::Error> {
+    ) -> Result<ConnectorRequest, Error> {
         self.request(
             "api/v2/Requests/Outgoing",
             Method::POST,
@@ -36,7 +37,7 @@ impl<'a> ConnectorClient<'a> {
     pub fn get_request(
         &self,
         req_id: &str,
-    ) -> Result<ConnectorRequest, crate::connector_errors::Error> {
+    ) -> Result<ConnectorRequest, Error> {
         self.request(
             &format!("api/v2/Requests/Outgoing/{req_id}"),
             Method::GET,
@@ -47,7 +48,7 @@ impl<'a> ConnectorClient<'a> {
     pub fn get_requests(
         &self,
         req: &GetRequestsRequest<'_>,
-    ) -> Result<ConnectorRequest, crate::connector_errors::Error> {
+    ) -> Result<ConnectorRequest, Error> {
         self.request(
             &format!(
                 "api/v2/Requests/Outgoing?{}",

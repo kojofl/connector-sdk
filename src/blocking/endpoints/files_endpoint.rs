@@ -1,3 +1,4 @@
+use super::Error;
 use crate::{
     blocking::ConnectorClient,
     types::{
@@ -18,7 +19,7 @@ impl<'a> ConnectorClient<'a> {
     pub fn get_files(
         &self,
         files_query: &GetAllFilesRequest<'_>,
-    ) -> Result<Vec<ConnectorFile>, crate::connector_errors::Error> {
+    ) -> Result<Vec<ConnectorFile>, Error> {
         self.request(
             &format!(
                 "api/v2/Files?{}",
@@ -29,17 +30,15 @@ impl<'a> ConnectorClient<'a> {
         )
     }
 
-    pub fn upload_file(
-        &self,
-        upload_body: &UploadFileRequest<'_>,
-    ) -> Result<ConnectorFile, crate::connector_errors::Error> {
-        self.upload_file_internal("api/v2/Files/Own", upload_body)
+    pub fn upload_file(&self, _upload_body: &UploadFileRequest<'_>) -> Result<ConnectorFile, Error> {
+        unimplemented!()
+        // self.upload_file_internal("api/v2/Files/Own", upload_body)
     }
 
     pub fn get_own_files(
         &self,
         files_query: &GetOwnFilesRequest<'_>,
-    ) -> Result<Vec<ConnectorFile>, crate::connector_errors::Error> {
+    ) -> Result<Vec<ConnectorFile>, Error> {
         self.request(
             &format!(
                 "api/v2/Files/Own?{}",
@@ -53,7 +52,7 @@ impl<'a> ConnectorClient<'a> {
     pub fn load_peer_file(
         &self,
         file_reference: &LoadPeerFileRequest,
-    ) -> Result<Vec<ConnectorFile>, crate::connector_errors::Error> {
+    ) -> Result<Vec<ConnectorFile>, Error> {
         self.request(
             &format!(
                 "api/v2/Files/Own?{}",
@@ -67,7 +66,7 @@ impl<'a> ConnectorClient<'a> {
     pub fn get_peer_files(
         &self,
         peer_req: &GetPeerFilesRequest<'_>,
-    ) -> Result<Vec<ConnectorFile>, crate::connector_errors::Error> {
+    ) -> Result<Vec<ConnectorFile>, Error> {
         self.request(
             &format!(
                 "api/v2/Files/Own?{}",
@@ -78,21 +77,15 @@ impl<'a> ConnectorClient<'a> {
         )
     }
 
-    pub fn get_file(
-        &self,
-        file_id: &str,
-    ) -> Result<Vec<ConnectorFile>, crate::connector_errors::Error> {
+    pub fn get_file(&self, file_id: &str) -> Result<Vec<ConnectorFile>, Error> {
         self.request(&format!("api/v2/Files/{file_id}",), Method::GET, None)
     }
 
-    pub fn get_file_data(&self, file_id: &str) -> Result<Vec<u8>, crate::connector_errors::Error> {
+    pub fn get_file_data(&self, file_id: &str) -> Result<Vec<u8>, Error> {
         self.download(&format!("api/v2/Files/{file_id}/Download",), Method::GET)
     }
 
-    pub fn get_file_qr_code(
-        &self,
-        file_id: &str,
-    ) -> Result<Vec<u8>, crate::connector_errors::Error> {
+    pub fn get_file_qr_code(&self, file_id: &str) -> Result<Vec<u8>, Error> {
         self.download_qr(&format!("api/v2/Files/{file_id}"), Method::GET, None)
     }
 
@@ -100,7 +93,7 @@ impl<'a> ConnectorClient<'a> {
         &self,
         file_id: &str,
         req: Option<CreateTokenForFileRequest<'_>>,
-    ) -> Result<ConnectorToken<FileToken>, crate::connector_errors::Error> {
+    ) -> Result<ConnectorToken<FileToken>, Error> {
         self.request(
             &format!("api/v2/Files/{file_id}/Token",),
             Method::POST,
@@ -112,7 +105,7 @@ impl<'a> ConnectorClient<'a> {
         &self,
         file_id: &str,
         req: Option<CreateTokenQrCodeForFileRequest<'_>>,
-    ) -> Result<Vec<u8>, crate::connector_errors::Error> {
+    ) -> Result<Vec<u8>, Error> {
         self.download_qr(
             &format!("api/v2/Files/{file_id}/Token"),
             Method::POST,

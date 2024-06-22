@@ -1,6 +1,7 @@
 use reqwest::Method;
 use serde::{de::DeserializeOwned, Serialize};
 
+use super::Error;
 use crate::{
     blocking::ConnectorClient,
     types::relationship::{
@@ -15,7 +16,7 @@ impl<'a> ConnectorClient<'a> {
     pub fn create_relationship<T: Serialize + DeserializeOwned>(
         &self,
         req: CreateRelationshipRequest<'_, T>,
-    ) -> Result<ConnectorRelationship<T, serde_json::Value>, crate::connector_errors::Error> {
+    ) -> Result<ConnectorRelationship<T, serde_json::Value>, Error> {
         self.request(
             "api/v2/Relationships",
             Method::POST,
@@ -26,17 +27,14 @@ impl<'a> ConnectorClient<'a> {
     pub fn get_relationship<T: DeserializeOwned>(
         &self,
         id: &str,
-    ) -> Result<ConnectorRelationship<T, serde_json::Value>, crate::connector_errors::Error> {
+    ) -> Result<ConnectorRelationship<T, serde_json::Value>, Error> {
         self.request(&format!("api/v2/Relationships/{id}",), Method::GET, None)
     }
 
     pub fn get_relationships(
         &self,
         req: GetRelationshipsRequest<'_>,
-    ) -> Result<
-        Vec<ConnectorRelationship<serde_json::Value, serde_json::Value>>,
-        crate::connector_errors::Error,
-    > {
+    ) -> Result<Vec<ConnectorRelationship<serde_json::Value, serde_json::Value>>, Error> {
         self.request(
             &format!(
                 "api/v2/Relationships?{}",
@@ -52,10 +50,7 @@ impl<'a> ConnectorClient<'a> {
         rel_id: &str,
         change_id: &str,
         req: &DecideRelationshipChangeRequest<C>,
-    ) -> Result<
-        Vec<ConnectorRelationship<serde_json::Value, serde_json::Value>>,
-        crate::connector_errors::Error,
-    > {
+    ) -> Result<Vec<ConnectorRelationship<serde_json::Value, serde_json::Value>>, Error> {
         self.request(
             &format!("api/v2/Relationships/{rel_id}/Changes/{change_id}/Accept",),
             Method::PUT,
@@ -68,10 +63,7 @@ impl<'a> ConnectorClient<'a> {
         rel_id: &str,
         change_id: &str,
         req: &DecideRelationshipChangeRequest<C>,
-    ) -> Result<
-        Vec<ConnectorRelationship<serde_json::Value, serde_json::Value>>,
-        crate::connector_errors::Error,
-    > {
+    ) -> Result<Vec<ConnectorRelationship<serde_json::Value, serde_json::Value>>, Error> {
         self.request(
             &format!("api/v2/Relationships/{rel_id}/Changes/{change_id}/Reject",),
             Method::PUT,

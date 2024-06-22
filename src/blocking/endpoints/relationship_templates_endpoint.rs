@@ -12,12 +12,13 @@ use crate::{
         tokens::{ConnectorToken, FileToken},
     },
 };
+use super::Error;
 
 impl<'a> ConnectorClient<'a> {
     pub fn get_relationship_templates(
         &self,
         request_params: Option<GetRelationshipTemplatesRequest<'_>>,
-    ) -> Result<Vec<ConnectorRelationshipTemplate<serde_json::Value>>, crate::connector_errors::Error>
+    ) -> Result<Vec<ConnectorRelationshipTemplate<serde_json::Value>>, Error>
     {
         self.request(
             &format!(
@@ -34,7 +35,7 @@ impl<'a> ConnectorClient<'a> {
     pub fn get_own_relationship_templates(
         &self,
         request_params: Option<GetTemplatesRequest<'_>>,
-    ) -> Result<Vec<ConnectorRelationshipTemplate<serde_json::Value>>, crate::connector_errors::Error>
+    ) -> Result<Vec<ConnectorRelationshipTemplate<serde_json::Value>>, Error>
     {
         self.request(
             &format!(
@@ -51,7 +52,7 @@ impl<'a> ConnectorClient<'a> {
     pub fn get_peer_relationship_templates(
         &self,
         request_params: Option<GetTemplatesRequest<'_>>,
-    ) -> Result<Vec<ConnectorRelationshipTemplate<serde_json::Value>>, crate::connector_errors::Error>
+    ) -> Result<Vec<ConnectorRelationshipTemplate<serde_json::Value>>, Error>
     {
         self.request(
             &format!(
@@ -68,7 +69,7 @@ impl<'a> ConnectorClient<'a> {
     pub fn get_relationship_template_by_id<T: DeserializeOwned>(
         &self,
         id: &str,
-    ) -> Result<ConnectorRelationshipTemplate<T>, crate::connector_errors::Error> {
+    ) -> Result<ConnectorRelationshipTemplate<T>, Error> {
         self.request(
             &format!("api/v2/RelationshipTemplates/{id}"),
             Method::GET,
@@ -79,7 +80,7 @@ impl<'a> ConnectorClient<'a> {
     pub fn create_own_relationship_template<T: Serialize + DeserializeOwned>(
         &self,
         template: &CreateOwnRelationshipTemplateRequest<'_, T>,
-    ) -> Result<ConnectorRelationshipTemplate<T>, crate::connector_errors::Error> {
+    ) -> Result<ConnectorRelationshipTemplate<T>, Error> {
         self.request(
             "api/v2/RelationshipTemplates/Own",
             Method::POST,
@@ -90,7 +91,7 @@ impl<'a> ConnectorClient<'a> {
     pub fn get_qr_code_for_relationship_template<T: Serialize>(
         &self,
         id: &str,
-    ) -> Result<Vec<u8>, crate::connector_errors::Error> {
+    ) -> Result<Vec<u8>, Error> {
         self.download_qr(
             &format!("api/v2/RelationshipTemplates/{id}"),
             Method::GET,
@@ -102,7 +103,7 @@ impl<'a> ConnectorClient<'a> {
         &self,
         id: &str,
         req: Option<CreateTokenForOwnRelationshipTemplateRequest>,
-    ) -> Result<ConnectorToken<FileToken>, crate::connector_errors::Error> {
+    ) -> Result<ConnectorToken<FileToken>, Error> {
         self.request(
             &format!("api/v2/RelationshipTemplates/Own/{id}"),
             Method::POST,

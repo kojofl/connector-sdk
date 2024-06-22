@@ -1,5 +1,6 @@
 use reqwest::Method;
 
+use super::Error;
 use crate::{
     blocking::ConnectorClient,
     types::attributes::{
@@ -16,7 +17,7 @@ impl<'a> ConnectorClient<'a> {
     pub fn create_attribute(
         &self,
         attribute: &CreateAttributeRequest,
-    ) -> Result<ConnectorAttribute, crate::connector_errors::Error> {
+    ) -> Result<ConnectorAttribute, Error> {
         self.request(
             "api/v2/Attributes",
             Method::POST,
@@ -27,7 +28,7 @@ impl<'a> ConnectorClient<'a> {
     pub fn get_attributes(
         &self,
         query: &GetAttributesRequest<'a>,
-    ) -> Result<Vec<ConnectorAttribute>, crate::connector_errors::Error> {
+    ) -> Result<Vec<ConnectorAttribute>, Error> {
         self.request(
             &format!(
                 "api/v2/Attributes?{}",
@@ -38,17 +39,14 @@ impl<'a> ConnectorClient<'a> {
         )
     }
 
-    pub fn get_attribute_by_id(
-        &self,
-        id: &str,
-    ) -> Result<ConnectorAttribute, crate::connector_errors::Error> {
+    pub fn get_attribute_by_id(&self, id: &str) -> Result<ConnectorAttribute, Error> {
         self.request(&format!("api/v2/Attributes/{id}"), Method::GET, None)
     }
 
     pub fn get_valid_attributes(
         &self,
         query: &GetValidAttributesRequest<'a>,
-    ) -> Result<Vec<ConnectorAttribute>, crate::connector_errors::Error> {
+    ) -> Result<Vec<ConnectorAttribute>, Error> {
         self.request(
             &format!(
                 "api/v2/Attributes/Valid?{}",
@@ -62,7 +60,7 @@ impl<'a> ConnectorClient<'a> {
     pub fn execute_identity_query(
         &self,
         body: &ExecuteIdentityAttributeQueryRequest<'a>,
-    ) -> Result<Vec<ConnectorAttribute>, crate::connector_errors::Error> {
+    ) -> Result<Vec<ConnectorAttribute>, Error> {
         self.request(
             "api/v2/Attributes/ExecuteIdentityAttributeQuery",
             Method::POST,

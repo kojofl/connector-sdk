@@ -1,6 +1,7 @@
 use reqwest::Method;
 use serde::{de::DeserializeOwned, Serialize};
 
+use super::Error;
 use crate::{
     blocking::ConnectorClient,
     types::{
@@ -17,7 +18,7 @@ impl<'a> ConnectorClient<'a> {
     pub fn get_messages(
         &self,
         attribute_query: &GetMessagesRequest,
-    ) -> Result<Vec<ConnectorMessage<serde_json::Value>>, crate::connector_errors::Error> {
+    ) -> Result<Vec<ConnectorMessage<serde_json::Value>>, Error> {
         self.request(
             &format!(
                 "api/v2/Messages?{}",
@@ -29,10 +30,10 @@ impl<'a> ConnectorClient<'a> {
         )
     }
 
-    pub fn send_message<'i, T: Serialize + DeserializeOwned>(
+    pub fn send_message<T: Serialize + DeserializeOwned>(
         &self,
-        send_message: &SendMessageRequest<'i, T>,
-    ) -> Result<ConnectorMessage<T>, crate::connector_errors::Error> {
+        send_message: &SendMessageRequest<'_, T>,
+    ) -> Result<ConnectorMessage<T>, Error> {
         self.request(
             "api/v2/Messages",
             Method::POST,
@@ -43,7 +44,7 @@ impl<'a> ConnectorClient<'a> {
     pub fn get_message<T: DeserializeOwned>(
         &self,
         id: &str,
-    ) -> Result<ConnectorMessageWithAttachments<T>, crate::connector_errors::Error> {
+    ) -> Result<ConnectorMessageWithAttachments<T>, Error> {
         self.request(&format!("api/v2/Messages/{id}"), Method::GET, None)
     }
 
@@ -51,7 +52,7 @@ impl<'a> ConnectorClient<'a> {
         &self,
         message_id: &str,
         attachment_id: &str,
-    ) -> Result<ConnectorFile, crate::connector_errors::Error> {
+    ) -> Result<ConnectorFile, Error> {
         self.request(
             &format!("api/v2/Messages/{message_id}/Attachments/{attachment_id}"),
             Method::GET,
@@ -63,7 +64,7 @@ impl<'a> ConnectorClient<'a> {
         &self,
         message_id: &str,
         attachment_id: &str,
-    ) -> Result<Vec<u8>, crate::connector_errors::Error> {
+    ) -> Result<Vec<u8>, Error> {
         self.download(
             &format!("api/v2/Messages/{message_id}/Attachments/{attachment_id}/Download"),
             Method::GET,

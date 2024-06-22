@@ -1,5 +1,6 @@
 use reqwest::Method;
 
+use super::Error;
 use crate::{
     blocking::ConnectorClient,
     types::challenges::{
@@ -9,9 +10,7 @@ use crate::{
 
 /// All endpoints related to creating and verifying challenges.
 impl<'a> ConnectorClient<'a> {
-    pub fn create_device_challenge(
-        &self,
-    ) -> Result<ConnectorChallenge, crate::connector_errors::Error> {
+    pub fn create_device_challenge(&self) -> Result<ConnectorChallenge, Error> {
         self.request(
             "api/v2/challenges",
             Method::POST,
@@ -19,9 +18,7 @@ impl<'a> ConnectorClient<'a> {
         )
     }
 
-    pub fn create_identity_challenge(
-        &self,
-    ) -> Result<ConnectorChallenge, crate::connector_errors::Error> {
+    pub fn create_identity_challenge(&self) -> Result<ConnectorChallenge, Error> {
         self.request(
             "api/v2/challenges",
             Method::POST,
@@ -29,10 +26,7 @@ impl<'a> ConnectorClient<'a> {
         )
     }
 
-    pub fn create_relationship_challenge(
-        &self,
-        rel: &str,
-    ) -> Result<ConnectorChallenge, crate::connector_errors::Error> {
+    pub fn create_relationship_challenge(&self, rel: &str) -> Result<ConnectorChallenge, Error> {
         self.request(
             "api/v2/challenges",
             Method::POST,
@@ -45,10 +39,8 @@ impl<'a> ConnectorClient<'a> {
     pub fn validate_challenge(
         &self,
         req: &ValidateChallengeRequest<'_>,
-    ) -> Result<
-        ConnectorChallengeValidationResult<serde_json::Value, serde_json::Value>,
-        crate::connector_errors::Error,
-    > {
+    ) -> Result<ConnectorChallengeValidationResult<serde_json::Value, serde_json::Value>, Error>
+    {
         self.request(
             "api/v2/Challenges/Validate",
             Method::POST,
