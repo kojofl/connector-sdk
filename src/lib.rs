@@ -1,4 +1,5 @@
 #![doc = include_str!("../README.md")]
+#![cfg(feature = "blocking")]
 pub mod blocking;
 mod connector_errors;
 #[doc(hidden)]

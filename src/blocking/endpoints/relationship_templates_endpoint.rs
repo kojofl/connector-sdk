@@ -1,6 +1,7 @@
 use reqwest::Method;
 use serde::{de::DeserializeOwned, Serialize};
 
+use super::Error;
 use crate::{
     blocking::ConnectorClient,
     types::{
@@ -12,14 +13,12 @@ use crate::{
         tokens::{ConnectorToken, FileToken},
     },
 };
-use super::Error;
 
 impl<'a> ConnectorClient<'a> {
     pub fn get_relationship_templates(
         &self,
         request_params: Option<GetRelationshipTemplatesRequest<'_>>,
-    ) -> Result<Vec<ConnectorRelationshipTemplate<serde_json::Value>>, Error>
-    {
+    ) -> Result<Vec<ConnectorRelationshipTemplate<serde_json::Value>>, Error> {
         self.request(
             &format!(
                 "api/v2/RelationshipTemplates{}",
@@ -35,8 +34,7 @@ impl<'a> ConnectorClient<'a> {
     pub fn get_own_relationship_templates(
         &self,
         request_params: Option<GetTemplatesRequest<'_>>,
-    ) -> Result<Vec<ConnectorRelationshipTemplate<serde_json::Value>>, Error>
-    {
+    ) -> Result<Vec<ConnectorRelationshipTemplate<serde_json::Value>>, Error> {
         self.request(
             &format!(
                 "api/v2/RelationshipTemplates{}",
@@ -52,8 +50,7 @@ impl<'a> ConnectorClient<'a> {
     pub fn get_peer_relationship_templates(
         &self,
         request_params: Option<GetTemplatesRequest<'_>>,
-    ) -> Result<Vec<ConnectorRelationshipTemplate<serde_json::Value>>, Error>
-    {
+    ) -> Result<Vec<ConnectorRelationshipTemplate<serde_json::Value>>, Error> {
         self.request(
             &format!(
                 "api/v2/RelationshipTemplates{}",
@@ -88,10 +85,7 @@ impl<'a> ConnectorClient<'a> {
         )
     }
 
-    pub fn get_qr_code_for_relationship_template<T: Serialize>(
-        &self,
-        id: &str,
-    ) -> Result<Vec<u8>, Error> {
+    pub fn get_qr_code_for_relationship_template(&self, id: &str) -> Result<Vec<u8>, Error> {
         self.download_qr(
             &format!("api/v2/RelationshipTemplates/{id}"),
             Method::GET,

@@ -92,7 +92,7 @@ impl<'a> ConnectorClient<'a> {
         .await
     }
 
-    pub async fn get_qr_code_for_relationship_template<T: Serialize>(
+    pub async fn get_qr_code_for_relationship_template(
         &self,
         id: &str,
     ) -> Result<Vec<u8>, crate::connector_errors::Error> {
