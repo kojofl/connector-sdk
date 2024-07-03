@@ -5,15 +5,15 @@ use super::ConnectorRequestContent;
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct CanCreateOutgoingRequestRequest {
-    content: ConnectorRequestContent,
-    peer: Option<String>,
+    pub content: ConnectorRequestContent,
+    pub peer: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct CreateOutgoingRequestRequest {
-    content: ConnectorRequestContent,
-    peer: String,
+    pub content: ConnectorRequestContent,
+    pub peer: String,
 }
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
@@ -45,7 +45,7 @@ impl From<DecideRequestItem> for DecideRequestContent {
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct DecideRequestItemGroup {
-    items: Vec<DecideRequestItem>,
+    pub items: Vec<DecideRequestItem>,
 }
 
 impl FromIterator<DecideRequestItem> for DecideRequestItemGroup {
