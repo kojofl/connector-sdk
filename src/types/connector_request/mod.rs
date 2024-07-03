@@ -178,7 +178,6 @@ impl RequestItem {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
-#[serde(tag = "@type")]
 pub struct CreateAttributeRequestItem {
     title: Option<String>,
     description: Option<String>,
@@ -188,7 +187,6 @@ pub struct CreateAttributeRequestItem {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
-#[serde(tag = "@type")]
 pub struct ShareAttributeRequestItem {
     title: Option<String>,
     description: Option<String>,
@@ -198,7 +196,6 @@ pub struct ShareAttributeRequestItem {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
-#[serde(tag = "@type")]
 pub struct ProposeAttributeRequestItem {
     title: Option<String>,
     description: Option<String>,
@@ -208,7 +205,6 @@ pub struct ProposeAttributeRequestItem {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
-#[serde(tag = "@type")]
 pub struct ReadAttributeRequestItem {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
@@ -243,7 +239,6 @@ pub struct IdentityAttributeQuery {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
-#[serde(tag = "@type")]
 pub struct ConsentRequestItem {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
@@ -259,7 +254,6 @@ pub struct ConsentRequestItem {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
-#[serde(tag = "@type")]
 pub struct AuthenticationRequestItem {
     #[serde(skip_serializing_if = "Option::is_none")]
     title: Option<String>,
