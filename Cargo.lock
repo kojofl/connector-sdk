@@ -139,7 +139,7 @@ dependencies = [
 
 [[package]]
 name = "connector-sdk"
-version = "0.2.4"
+version = "0.2.5"
 dependencies = [
  "actix-rt",
  "chrono",

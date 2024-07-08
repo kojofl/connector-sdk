@@ -125,6 +125,7 @@ impl<'a> ConnectorClient<'a> {
     ) -> Result<Vec<u8>, Error> {
         let req = self.build_download_qr(resource, method);
         let mut all_bytes = Vec::new();
+        println!("{req:?}");
         if let Some(body) = body {
             req.send_string(body.as_str())?
                 .into_reader()
@@ -221,6 +222,7 @@ impl<'a> ConnectorClient<'a> {
 
         self.http_client()
             .request(method.as_str(), url.as_str())
+            .set("X-API-KEY", self.api_key)
             .set("accept", "image/png")
     }
 
